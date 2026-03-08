@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>26-1 IM Class — Student Profile Report</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2eb;
+    --surface: #ede9e0;
+    --card: #ffffff;
+    --accent: #1a1a1a;
+    --gold: #b8860b;
+    --teal: #1a7a6e;
+    --rose: #b84040;
+    --violet: #5a3e8a;
+    --text: #1a1a1a;
+    --muted: #7a7570;
+    --border: #d4cfc6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Serif Display', serif;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--accent);
+    color: #f5f2eb;
+    padding: 80px 64px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: 'WHO\AWE\AARE';
+    white-space: pre;
+    position: absolute;
+    right: -10px; top: -20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 200px;
+    line-height: 0.85;
+    opacity: 0.06;
+    letter-spacing: -4px;
+    color: #fff;
+  }
+  .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #b8a882;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 400;
+    line-height: 1.0;
+    letter-spacing: -1px;
+    color: #f5f2eb;
+  }
+  h1 em { font-style: italic; color: #b8a882; }
+  .subtitle {
+    margin-top: 20px;
+    color: #7a7570;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+  }
+  .header-note {
+    margin-top: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #b8a882;
+    max-width: 560px;
+    line-height: 1.7;
+    border-left: 2px solid #b8a882;
+    padding-left: 16px;
+  }
+
+  /* MAIN */
+  main { padding: 60px 64px; display: grid; gap: 28px; }
+
+  /* STAT CARDS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .stat-card {
+    background: var(--card);
+    padding: 32px 28px;
+    position: relative;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .stat-card:nth-child(1) .stat-num { color: var(--accent); }
+  .stat-card:nth-child(2) .stat-num { color: var(--teal); }
+  .stat-card:nth-child(3) .stat-num { color: var(--gold); }
+  .stat-card:nth-child(4) .stat-num { color: var(--violet); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 8px;
+    letter-spacing: 1px;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+  .stat-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 10px;
+  }
+
+  /* TWO / THREE COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); border: 1px solid var(--border); }
+  .two-col-free { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; background: var(--border); border: 1px solid var(--border); }
+
+  /* SECTION CARD */
+  .section-card {
+    background: var(--card);
+    padding: 36px 32px;
+  }
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section-title span {
+    background: var(--accent);
+    color: #f5f2eb;
+    padding: 2px 8px;
+    font-size: 9px;
+  }
+
+  /* BAR CHART */
+  .bar-group { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: grid; grid-template-columns: 120px 1fr 40px; align-items: center; gap: 12px; }
+  .bar-label { font-size: 12px; color: var(--text); text-align: right; font-family: 'DM Mono', monospace; }
+  .bar-track { height: 20px; background: var(--surface); border-radius: 0; overflow: hidden; }
+  .bar-fill { height: 100%; transition: width 1.2s cubic-bezier(.16,1,.3,1); }
+  .bar-val { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); }
+
+  /* SCALE BARS */
+  .scale-bars { display: flex; gap: 8px; align-items: flex-end; height: 110px; margin-top: 8px; }
+  .scale-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .scale-bar { width: 100%; }
+  .scale-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .scale-count { font-family: 'Bebas Neue', sans-serif; font-size: 22px; }
+
+  /* TAGS */
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    background: var(--surface);
+  }
+  .tag.hi { border-color: var(--accent); background: var(--accent); color: #f5f2eb; }
+  .tag.md { border-color: var(--teal); color: var(--teal); }
+  .tag.lo { border-color: var(--gold); color: var(--gold); }
+
+  /* CAREER */
+  .career-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .career-item {
+    padding: 10px 14px;
+    background: var(--surface);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    border-left: 2px solid var(--border);
+  }
+  .career-item.top { border-color: var(--accent); background: var(--accent); color: #f5f2eb; }
+  .career-item.sec { border-color: var(--teal); }
+
+  /* INSIGHT */
+  .insight-block {
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    background: var(--surface);
+  }
+  .insight-block.teal { border-color: var(--teal); }
+  .insight-block.gold { border-color: var(--gold); }
+  .insight-block.rose { border-color: var(--rose); }
+  .insight-block strong {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .insight-block strong { color: var(--accent); }
+  .insight-block.teal strong { color: var(--teal); }
+  .insight-block.gold strong { color: var(--gold); }
+  .insight-block.rose strong { color: var(--rose); }
+
+  /* DONUT */
+  .donut-wrap { display: flex; align-items: center; gap: 28px; }
+  .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; font-family: 'DM Mono', monospace; }
+  .legend-dot { width: 10px; height: 10px; flex-shrink: 0; }
+
+  /* NOTICE */
+  .notice {
+    background: #fff8e6;
+    border: 1px solid #d4a820;
+    border-left: 4px solid #d4a820;
+    padding: 20px 24px;
+    font-size: 12px;
+    color: #7a5800;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.3px;
+    line-height: 1.8;
+  }
+
+  /* SECTION HEADER (full-width title blocks) */
+  .section-header {
+    background: var(--accent);
+    color: #f5f2eb;
+    padding: 18px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-header::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.2); }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 64px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 900px) {
+    header, main { padding: 32px 24px; }
+    .stats-row, .two-col, .three-col { grid-template-columns: 1fr; }
+    .two-col-free { grid-template-columns: 1fr; gap: 16px; }
+    footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">Introduction to Management · Spring 2026</div>
+  <h1>Class <em>Profile</em><br>Report</h1>
+  <div class="subtitle">51 Students · Data Collected March 3, 2026</div>
+  <div class="header-note">
+    This report summarizes who we are as a class — our backgrounds, career hopes, expectations, and what we want to learn together. Shared with all students to build a stronger community from Day 1.
+  </div>
+</header>
+
+<main>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">51</div>
+      <div class="stat-label">Students<br>Enrolled</div>
+      <div class="stat-sub">After removing 2 duplicate submissions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Nationalities<br>Represented</div>
+      <div class="stat-sub">Korea, Mongolia, China, India, Indonesia, Japan & more</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">23</div>
+      <div class="stat-label">Different<br>Majors</div>
+      <div class="stat-sub">From CS & Engineering to Law, Arts & Counseling</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">3.0</div>
+      <div class="stat-label">Avg. English<br>Proficiency</div>
+      <div class="stat-sub">Self-rated 1–5 scale compared to avg. HGU students</div>
+    </div>
+  </div>
+
+  <!-- NATIONALITY + ENGLISH -->
+  <div class="two-col">
+    <div class="section-card">
+      <div class="section-title"><span>01</span> Nationality Breakdown</div>
+      <div class="bar-group">
+        <div class="bar-row">
+          <div class="bar-label">Korea</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%; background:var(--accent);"></div></div>
+          <div class="bar-val">36</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Mongolia</div>
+          <div class="bar-track"><div class="bar-fill" style="width:25%; background:var(--teal);"></div></div>
+          <div class="bar-val">9</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">China</div>
+          <div class="bar-track"><div class="bar-fill" style="width:8.3%; background:var(--gold);"></div></div>
+          <div class="bar-val">3</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">India</div>
+          <div class="bar-track"><div class="bar-fill" style="width:2.8%; background:var(--rose);"></div></div>
+          <div class="bar-val">1</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Indonesia</div>
+          <div class="bar-track"><div class="bar-fill" style="width:2.8%; background:#d4700a;"></div></div>
+          <div class="bar-val">1</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Japan</div>
+          <div class="bar-track"><div class="bar-fill" style="width:2.8%; background:#4a6eb8;"></div></div>
+          <div class="bar-val">1</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Other</div>
+          <div class="bar-track"><div class="bar-fill" style="width:5.5%; background:#aaa;"></div></div>
+          <div class="bar-val">2</div>
+        </div>
+      </div>
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); font-family:'DM Mono',monospace; line-height:1.7;">
+        International students make up <strong style="color:var(--teal);">29.4%</strong> of the class — a truly global classroom. "Other" includes Korean-Americans and Korean-Guatemalans.
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title"><span>02</span> English Proficiency (Self-rated 1–5)</div>
+      <div class="scale-bars">
+        <div class="scale-bar-wrap">
+          <div class="scale-count" style="color:var(--rose);">7</div>
+          <div class="scale-bar" style="height:38%; background:var(--rose);"></div>
+          <div class="scale-num">1</div>
+        </div>
+        <div class="scale-bar-wrap">
+          <div class="scale-count" style="color:#d4700a;">10</div>
+          <div class="scale-bar" style="height:55%; background:#d4700a;"></div>
+          <div class="scale-num">2</div>
+        </div>
+        <div class="scale-bar-wrap">
+          <div class="scale-count" style="color:var(--muted);">18</div>
+          <div class="scale-bar" style="height:100%; background:var(--muted);"></div>
+          <div class="scale-num">3</div>
+        </div>
+        <div class="scale-bar-wrap">
+          <div class="scale-count" style="color:var(--teal);">12</div>
+          <div class="scale-bar" style="height:66%; background:var(--teal);"></div>
+          <div class="scale-num">4</div>
+        </div>
+        <div class="scale-bar-wrap">
+          <div class="scale-count" style="color:var(--gold);">6</div>
+          <div class="scale-bar" style="height:33%; background:var(--gold);"></div>
+          <div class="scale-num">5</div>
+        </div>
+      </div>
+      <div style="margin-top:20px; display:flex; gap:24px; font-family:'DM Mono',monospace; font-size:12px; flex-wrap:wrap;">
+        <div>Class Average <span style="color:var(--accent); font-size:22px; font-family:'Bebas Neue'; vertical-align:middle;">3.0</span></div>
+        <div>Lower (1–2) <span style="color:var(--rose);">33%</span></div>
+        <div>Higher (4–5) <span style="color:var(--teal);">35%</span></div>
+      </div>
+      <div style="margin-top:14px; font-size:12px; color:var(--muted); font-family:'DM Mono',monospace; line-height:1.7;">
+        Wide range across the class. Let's be patient and supportive of each other — everyone has something valuable to contribute regardless of language level.
+      </div>
+    </div>
+  </div>
+
+  <!-- MAJORS -->
+  <div class="section-card">
+    <div class="section-title"><span>03</span> Primary Major Distribution</div>
+    <div class="bar-group">
+      <div class="bar-row">
+        <div class="bar-label">GM (Bus. Admin)</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%; background:var(--accent);"></div></div>
+        <div class="bar-val">12</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">GLS</div>
+        <div class="bar-track"><div class="bar-fill" style="width:66%; background:var(--teal);"></div></div>
+        <div class="bar-val">8</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">경영 (Business)</div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%; background:var(--gold);"></div></div>
+        <div class="bar-val">3</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Computer Sci.</div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%; background:#4a6eb8;"></div></div>
+        <div class="bar-val">3</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">GE</div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%; background:var(--violet);"></div></div>
+        <div class="bar-val">3</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Intl. Studies</div>
+        <div class="bar-track"><div class="bar-fill" style="width:16%; background:var(--rose);"></div></div>
+        <div class="bar-val">2</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">ECE</div>
+        <div class="bar-track"><div class="bar-fill" style="width:16%; background:#4ab8a8;"></div></div>
+        <div class="bar-val">2</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">16 other majors</div>
+        <div class="bar-track"><div class="bar-fill" style="width:16%; background:#ccc;"></div></div>
+        <div class="bar-val">1 ea.</div>
+      </div>
+    </div>
+    <div style="margin-top:16px; font-size:12px; color:var(--muted); font-family:'DM Mono',monospace; line-height:1.7;">
+      Over <strong style="color:var(--accent);">half the class comes from non-business majors</strong> — including CS, Law, Arts, Counseling, Social Welfare, AI, and more. This course is a shared first step into management thinking for most of us.
+    </div>
+  </div>
+
+  <!-- EXPECTATIONS + CAREER -->
+  <div class="two-col">
+    <div class="section-card">
+      <div class="section-title"><span>04</span> What We Want from This Course</div>
+      <div class="tag-cloud">
+        <div class="tag hi">Management Basics</div>
+        <div class="tag hi">How Companies Work</div>
+        <div class="tag hi">Big Picture Thinking</div>
+        <div class="tag md">Leadership & Org.</div>
+        <div class="tag md">Practical Skills</div>
+        <div class="tag md">Communication</div>
+        <div class="tag lo">Entrepreneurship</div>
+        <div class="tag lo">Marketing</div>
+        <div class="tag lo">Finance Basics</div>
+        <div class="tag" style="border-color:var(--violet);color:var(--violet);">English Improvement</div>
+        <div class="tag">Major Exploration</div>
+        <div class="tag">Biblical Business View</div>
+      </div>
+      <div style="margin-top:20px; font-size:12px; color:var(--muted); font-family:'DM Mono',monospace; line-height:1.8; border-top:1px solid var(--border); padding-top:16px;">
+        The overwhelming answer: <em style="color:var(--accent); font-family:'DM Serif Display';">"Understand the fundamentals."</em><br>
+        Real-world examples and concept-first explanations will resonate most with this class.
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title"><span>05</span> Career Aspirations</div>
+      <div class="career-list">
+        <div class="career-item top">Startup / Entrepreneurship (4)</div>
+        <div class="career-item top">IT / Software Dev. (4)</div>
+        <div class="career-item top">Marketing (4)</div>
+        <div class="career-item top">Project Management (3)</div>
+        <div class="career-item sec">General Business / Econ (3)</div>
+        <div class="career-item sec">HR / People Ops (2)</div>
+        <div class="career-item sec">Graduate School (2)</div>
+        <div class="career-item sec">Law (2)</div>
+        <div class="career-item">Media / Film / Video (2)</div>
+        <div class="career-item">Int'l Business (2)</div>
+        <div class="career-item">Education / Counseling (2)</div>
+        <div class="career-item" style="color:var(--muted);">Still exploring (~10 students)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORK EXP + PREV COURSE -->
+  <div class="two-col">
+    <div class="section-card">
+      <div class="section-title"><span>06</span> Work Experience</div>
+      <div class="donut-wrap">
+        <svg width="130" height="130" viewBox="0 0 42 42" style="overflow:visible;">
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--surface)" stroke-width="8"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--teal)" stroke-width="8"
+            stroke-dasharray="46.6 53.4" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--border)" stroke-width="8"
+            stroke-dasharray="16.4 83.6" stroke-dashoffset="-21.6" transform="rotate(-90 21 21)"/>
+          <text x="21" y="23" text-anchor="middle" fill="var(--accent)" font-size="6.5" font-family="Bebas Neue">74%</text>
+        </svg>
+        <div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Have experience — 39 students (74%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>No experience — 14 students (26%)</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:14px; font-family:'DM Mono',monospace; line-height:1.7;">
+            Experience types include paid internships, part-time jobs, unpaid volunteer work, campus employment, and club leadership.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title"><span>07</span> Taken Prof. Yujin Lee's Course Before?</div>
+      <div class="donut-wrap">
+        <svg width="130" height="130" viewBox="0 0 42 42" style="overflow:visible;">
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--surface)" stroke-width="8"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--rose)" stroke-width="8"
+            stroke-dasharray="11.3 88.7" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--border)" stroke-width="8"
+            stroke-dasharray="88.7 11.3" stroke-dashoffset="-11.3" transform="rotate(-90 21 21)"/>
+          <text x="21" y="23" text-anchor="middle" fill="var(--accent)" font-size="6.5" font-family="Bebas Neue">82%</text>
+        </svg>
+        <div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>First time — ~42 students (82%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--rose)"></div>Previously taken — ~9 students (18%)</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:14px; font-family:'DM Mono',monospace; line-height:1.7;">
+            Returning students mostly took <strong style="color:var(--accent);">Human Resource Management</strong> last semester.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="section-card">
+    <div class="section-title"><span>08</span> Key Insights — Who We Are as a Class</div>
+
+    <div class="insight-block">
+      <strong>📚 We're here to learn the fundamentals</strong>
+      Almost everyone — regardless of major — wrote some version of "I want to understand how management/companies work." The class is not looking for advanced theory. Concept-first teaching with real-world examples will serve us best.
+    </div>
+    <div class="insight-block teal">
+      <strong>🌍 Wide range of English proficiency</strong>
+      33% of the class self-rated at 1 or 2 out of 5. Many international students mentioned English as a challenge. As classmates, let's be patient and inclusive — everyone is here to grow. As a class, pairing explanation with clear examples helps everyone.
+    </div>
+    <div class="insight-block gold">
+      <strong>💼 Most of us have real work experience</strong>
+      74% have worked in some capacity — hotel front desk, HR internships, campus TA roles, club leadership, part-time jobs, and more. We have a lot of real-life examples to draw from in class discussions.
+    </div>
+    <div class="insight-block">
+      <strong>🎯 Career goals are diverse — and many are still exploring</strong>
+      From startup founders to graphic designers to NGO workers to airline crew — the range is wide. About 20% are still figuring out their direction. That's perfectly okay, and this course is a great space to explore.
+    </div>
+    <div class="insight-block teal">
+      <strong>🙏 We each carry something personal into this class</strong>
+      Students shared prayer requests including senior burnout, health concerns, family situations, finding a new major, and academic pressure. Let's support one another and make this class a place of encouragement.
+    </div>
+  </div>
+
+  <!-- NOTICE (softened for sharing with students) -->
+  <div class="notice">
+    📋 <strong>Data note:</strong> Two students submitted the survey twice (the most recent response was used for this analysis). All personal contact information has been excluded from this report. Survey responses were collected on March 3, 2026.
+  </div>
+
+</main>
+
+<footer>
+  <div>Introduction to Management · Spring 2026 · HGU</div>
+  <div>N = 51 students · Generated with Claude</div>
+</footer>
+
+</body>
+</html>
